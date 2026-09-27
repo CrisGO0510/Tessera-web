@@ -1,0 +1,42 @@
+@use "sass:map";
+@use "tokens";
+
+@function -token($map, $name, $kind) {
+  @if not map.has-key($map, $name) {
+    @error "#{$kind} desconocido: '#{$name}'. Opciones: #{map.keys($map)}";
+  }
+
+  @return map.get($map, $name);
+}
+
+// Colores como custom properties (emitidas una vez en global.scss).
+@function color($name) {
+  $value: -token(tokens.$colors, $name, "Color");
+
+  @return var(--color-#{$name});
+}
+
+@function radius($name) {
+  @return -token(tokens.$radii, $name, "Radio");
+}
+
+@function shadow($name) {
+  @return -token(tokens.$shadows, $name, "Sombra");
+}
+
+@function font($name) {
+  @return -token(tokens.$fonts, $name, "Fuente");
+}
+
+@function content-width($name) {
+  @return -token(tokens.$content-widths, $name, "Ancho");
+}
+
+// Alfas recurrentes del handoff sobre ink (#111623) y sobre ice (#EEF2FB).
+@function ink($alpha) {
+  @return rgb(17 22 35 / #{$alpha});
+}
+
+@function ice($alpha) {
+  @return rgb(238 242 251 / #{$alpha});
+}

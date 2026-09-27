@@ -1,0 +1,32 @@
+[
+  {
+    "id": "estatura",
+    "order": 1,
+    "question": "¿Qué silla ergonómica me conviene según mi estatura?",
+    "answer": "De 1.55 m a 1.75 m la Duna cubre bien con el pistón estándar. Arriba de 1.80 m conviene un respaldo alto con cabecera, como la Mora Pro o la Ígnea. El asesor lo confirma con la altura de tu escritorio."
+  },
+  {
+    "id": "malla-o-tapizada",
+    "order": 2,
+    "question": "¿Malla o tapizada?",
+    "answer": "La malla mantiene el respaldo ventilado y es la mejor opción en clima cálido o sin aire acondicionado. El tapizado da una sensación más firme y aísla en climas fríos, pero acumula calor en jornadas largas."
+  },
+  {
+    "id": "llega-armada",
+    "order": 3,
+    "question": "¿La silla llega armada?",
+    "answer": "Sí. Sale calibrada del taller y se entrega montada. En zona metropolitana un técnico la ajusta contigo sentado; en el resto del país llega armada con la guía de ajuste impresa."
+  },
+  {
+    "id": "prueba",
+    "order": 4,
+    "question": "¿Puedo probarla antes de quedármela?",
+    "answer": "Tienes 30 días para usarla en tu escritorio. Si no te acomoda, la recogemos sin costo y se devuelve el importe completo."
+  },
+  {
+    "id": "garantia",
+    "order": 5,
+    "question": "¿Qué cubre la garantía?",
+    "answer": "Cinco años sobre estructura, mecanismo y pistón, y dos años sobre malla y espumas. Las piezas se reemplazan a domicilio."
+  }
+]

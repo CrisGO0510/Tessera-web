@@ -1,0 +1,70 @@
+// Tokens del diseño aprobado (handoff «Design Tokens»).
+// Solo mapas y variables: este archivo se inyecta en cada componente y NO debe emitir CSS.
+
+$colors: (
+  "ice": #eef2fb,
+  "white": #fff,
+  "ice-alt": #f7f9fd,
+  "ink": #111623,
+  "ink-2": #1b2536,
+  "cobalt": #2e5bdb,
+  "cobalt-dark": #1b3ea8,
+  "cobalt-light": #7fa0ff,
+  "gray-text": #454f66,
+  "gray-mid": #5a6480,
+  // #8a93a8 en el diseño: oscurecido al mínimo que da 4,5:1 (WCAG AA) sobre ice.
+  "gray-light": #656e89,
+  "pale-blue": #dce6f2,
+  "whatsapp": #25d366,
+  "whatsapp-hover": #1eb857,
+  "whatsapp-text": #0b2c17,
+);
+
+$radii: (
+  "pill": 999px,
+  "hero": 26px,
+  "xl": 20px,
+  "l": 18px,
+  "m": 16px,
+  "s": 14px,
+  "xs": 12px,
+  "xxs": 11px,
+  "mini": 9px,
+  "checkbox": 4px,
+);
+
+$shadows: (
+  "rest": 0 1px 2px rgb(17 22 35 / 4%),
+  "marquee": 0 16px 34px rgb(17 22 35 / 15%),
+  "card-hover": 0 18px 36px rgb(17 22 35 / 12%),
+  "chip": 0 18px 38px rgb(17 22 35 / 22%),
+  "need-hover": 0 20px 40px rgb(17 22 35 / 12%),
+  "marquee-hover": 0 26px 46px rgb(17 22 35 / 24%),
+  "hero": (0 34px 70px rgb(17 22 35 / 30%), 0 0 0 1px rgb(17 22 35 / 8%)),
+);
+
+// Variables CSS que genera la API de fuentes de Astro (astro.config.ts → fonts).
+$fonts: (
+  "archivo": (var(--font-archivo), system-ui, sans-serif),
+  "newsreader": (var(--font-newsreader), georgia, serif),
+  "mono": (var(--font-mono), ui-monospace, monospace),
+);
+
+$content-widths: (
+  "general": 1240px,
+  "text": 1000px,
+  "faq": 900px,
+);
+
+$mobile-breakpoint: 900px;
+
+// Alto mínimo del header (y su compensación al anclar): 14 px + botón + 14 px + borde.
+$header-height: 64px;
+$header-height-mobile: 76px;
+
+// Por debajo de este alto de ventana el scroll por pantallas se queda en proximity.
+$full-screen-min-height: 640px;
+
+// Barra de categorías bajo la portada (una fila de chips + CTA en escritorio).
+$category-bar-height: 68px;
+$side-padding: clamp(16px, 4vw, 48px);

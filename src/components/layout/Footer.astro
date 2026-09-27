@@ -1,0 +1,116 @@
+---
+import { site, type FooterColumn } from '@/data/site';
+import { categoryLinks, getSiteContent } from '@/lib/content';
+
+const { categoryBar, chairs } = await getSiteContent();
+const chairsColumn: FooterColumn = {
+  title: 'Sillas',
+  links: [...categoryLinks(categoryBar), { text: `Ver las ${String(chairs.length)} sillas`, href: '/catalogo' }],
+};
+const columns = [chairsColumn, ...site.footer];
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__content">
+    <div class="footer__columns">
+      <div class="footer__brand">
+        <a class="footer__wordmark" href="/sillas-ergonomicas">TESSERA</a>
+        <p class="footer__tagline">{site.tagline}</p>
+      </div>
+      {
+        columns.map((column) => (
+          <nav class="footer__column" aria-label={column.title}>
+            <span class="footer__title">{column.title}</span>
+            {column.links.map((link) => (
+              <a href={link.href}>{link.text}</a>
+            ))}
+          </nav>
+        ))
+      }
+    </div>
+    <div class="footer__legal">
+      <span>© {year} {site.name}. Sillas ergonómicas para home office.</span>
+      <span>{site.shippingText}</span>
+    </div>
+  </div>
+</footer>
+
+<style lang="scss">
+  .footer {
+    padding: clamp(48px, 6vw, 72px) $side-padding 40px;
+    background: color("ink");
+    color: color("ice");
+  }
+
+  .footer__content {
+    @include container;
+
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .footer__columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 28px;
+  }
+
+  .footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer__wordmark {
+    font: 800 19px / 1 font("archivo");
+    letter-spacing: -0.04em;
+    color: color("ice");
+
+    &:hover {
+      color: color("white");
+    }
+  }
+
+  .footer__tagline {
+    max-width: 26ch;
+    margin: 0;
+    font: 400 12.5px / 1.7 font("archivo");
+    color: ice(55%);
+  }
+
+  .footer__column {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    min-width: 0;
+
+    a {
+      font: 400 13px / 1.5 font("archivo");
+      color: ice(80%);
+
+      &:hover {
+        color: color("white");
+      }
+    }
+  }
+
+  .footer__title {
+    @include mono-label(9.5px);
+
+    color: color("cobalt-light");
+  }
+
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 22px;
+    border-top: 1px solid ice(12%);
+    font: 400 11px / 1.6 font("mono");
+    color: ice(48%); // 45 % en el diseño: 48 % es el mínimo con 4,5:1 (WCAG AA)
+  }
+</style>

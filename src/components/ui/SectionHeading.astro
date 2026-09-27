@@ -1,0 +1,66 @@
+---
+interface Props {
+  label: string;
+  title: string;
+  intro?: string;
+  /** Ancho máximo del bloque de texto (el diseño usa 46–56ch según la sección). */
+  width?: string;
+  variant?: 'light' | 'dark';
+  /** Nivel del título: h2 en casi todas las secciones, h1 en la cabecera del comparador. */
+  level?: 'h1' | 'h2';
+}
+
+const { label, title, intro, width = '52ch', variant = 'light', level = 'h2' } = Astro.props;
+const Title = level;
+---
+
+<div class:list={['section-heading', `section-heading--${variant}`]}>
+  <div class="section-heading__text" style={`max-width: ${width}`}>
+    <span class="section-heading__label">{label}</span>
+    <Title class="section-heading__title">{title}</Title>
+    {intro !== undefined && <p class="section-heading__intro">{intro}</p>}
+  </div>
+  {Astro.slots.has('action') && <slot name="action" />}
+</div>
+
+<style lang="scss">
+  .section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .section-heading__text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-heading__label {
+    @include mono-label;
+
+    color: color("cobalt");
+  }
+
+  .section-heading__title {
+    @include h2;
+  }
+
+  .section-heading__intro {
+    @include body-text;
+  }
+
+  .section-heading--dark {
+    .section-heading__label {
+      color: color("cobalt-light");
+    }
+
+    .section-heading__title {
+      @include h2-serif;
+
+      color: color("ice");
+    }
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+import type { WhatsAppContext } from '@/lib/contact';
+import WhatsAppCta from './WhatsAppCta.astro';
+
+interface Props {
+  headline: string;
+  text: string;
+  context: WhatsAppContext;
+  /** El bloque 06 empieza en ice; el cierre del comparador, en white. */
+  gradientStart?: 'ice' | 'white';
+  /** Ver WhatsAppCta. */
+  models?: readonly string[];
+}
+
+const { headline, text, context, gradientStart = 'ice', models = [] } = Astro.props;
+---
+
+<div class:list={['conversion', `conversion--${gradientStart}`]}>
+  <div class="conversion__text">
+    <strong class="conversion__headline">{headline}</strong>
+    <span class="conversion__detail">{text}</span>
+  </div>
+  <WhatsAppCta context={context} size="large" models={models} />
+</div>
+
+<style lang="scss">
+  .conversion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 26px 28px;
+    border: 1px solid rgb(46 91 219 / 20%);
+    border-radius: radius("m");
+  }
+
+  .conversion--ice {
+    background: linear-gradient(120deg, color("ice") 0%, color("pale-blue") 100%);
+  }
+
+  .conversion--white {
+    background: linear-gradient(120deg, color("white") 0%, color("pale-blue") 100%);
+  }
+
+  .conversion__text {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    max-width: 52ch;
+  }
+
+  .conversion__headline {
+    font: 600 18px / 1.25 font("archivo");
+    letter-spacing: -0.02em;
+    color: color("ink");
+  }
+
+  .conversion__detail {
+    font: 400 13.5px / 1.6 font("archivo");
+    color: color("gray-text");
+  }
+</style>

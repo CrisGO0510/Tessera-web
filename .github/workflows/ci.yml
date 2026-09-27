@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      # Solo dependencias de producción y severidad alta: los avisos de herramientas de
+      # desarrollo no bloquean (spec §13).
+      - run: npm run audit
+
+      - run: npm run verify
+      - run: npm run build
+      - run: npm run links
+
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e
+
+      # ubuntu-latest trae Google Chrome; Lighthouse CI lo encuentra solo.
+      - run: npm run lhci
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: reports
+          path: |
+            playwright-report/
+            .lighthouseci/
+          retention-days: 14

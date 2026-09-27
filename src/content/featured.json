@@ -1,0 +1,27 @@
+[
+  {
+    "id": "landing",
+    "hero": [
+      "duna",
+      "mora-pro",
+      "ignea"
+    ],
+    "showcase": [
+      "duna",
+      "mora-pro",
+      "ignea"
+    ],
+    "comparison": [
+      "duna",
+      "mora-pro",
+      "ignea"
+    ],
+    "anatomy": "duna",
+    "categoryBar": [
+      "malla",
+      "lumbar",
+      "intensivo",
+      "alta"
+    ]
+  }
+]

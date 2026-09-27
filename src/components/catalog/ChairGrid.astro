@@ -1,0 +1,115 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import { site } from '@/data/site';
+import { categoryIds, type Chair } from '@/lib/content';
+import { formatRange } from '@/lib/format';
+
+interface Props {
+  chairs: readonly Chair[];
+}
+
+const { chairs } = Astro.props;
+// La primera fila es la imagen LCP del catálogo: carga sin lazy y con prioridad.
+const FIRST_ROW = 4;
+---
+
+<div class="chair-grid">
+  {
+    chairs.map((chair, i) => (
+      <article class="grid-card" id={chair.id} data-chair data-categories={categoryIds(chair).join(' ')}>
+        <Photo
+          class="grid-card__image"
+          src={chair.data.image.src}
+          alt={chair.data.image.alt}
+          framing={chair.data.image}
+          widths={[240, 360, 480, 720]}
+          sizes="(max-width: 899px) calc(100vw - 32px), 240px"
+          priority={i < FIRST_ROW}
+        />
+        <div class="grid-card__body">
+          <h3 class="grid-card__name">{chair.data.name}</h3>
+          <p class="grid-card__description">{chair.data.description}</p>
+          <span class="grid-card__height">{formatRange(chair.data.userHeight, 'm', site.market.locale)}</span>
+        </div>
+      </article>
+    ))
+  }
+</div>
+
+<style lang="scss">
+  .chair-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+  }
+
+  .grid-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid ink(8%);
+    border-radius: radius("s");
+    background: color("ice");
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    scroll-margin-top: 96px;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: shadow("card-hover");
+    }
+
+    // Destino de «Ver la ficha de …» desde la landing y el comparador (/catalogo#<slug>).
+    &:target {
+      outline: 2px solid color("cobalt");
+      outline-offset: 3px;
+      box-shadow: shadow("card-hover");
+    }
+
+    &[hidden] {
+      display: none;
+    }
+
+    @include reduced-motion {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  .grid-card__image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  .grid-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 7px;
+    padding: 16px;
+  }
+
+  .grid-card__name {
+    margin: 0;
+    font: 600 15.5px / 1.25 font("archivo");
+    letter-spacing: -0.015em;
+    color: color("ink");
+  }
+
+  .grid-card__description {
+    margin: 0;
+    font: 400 12.5px / 1.55 font("archivo");
+    color: color("gray-mid");
+    text-wrap: pretty;
+  }
+
+  .grid-card__height {
+    margin-top: auto;
+    padding-top: 12px;
+    font: 400 10.5px / 1 font("mono");
+    color: color("cobalt");
+  }
+</style>

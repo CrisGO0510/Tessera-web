@@ -1,0 +1,20 @@
+[
+  {
+    "id": "cuentanos",
+    "order": 1,
+    "title": "Nos cuentas cómo trabajas",
+    "description": "Estatura, altura del escritorio y cuántas horas te sientas. Tres datos por WhatsApp."
+  },
+  {
+    "id": "calibramos",
+    "order": 2,
+    "title": "Calibramos la silla",
+    "description": "Tensión de malla, altura del lumbar y pistón se dejan listos antes de salir del taller."
+  },
+  {
+    "id": "llega-armada",
+    "order": 3,
+    "title": "Llega armada en 48 h",
+    "description": "En zona metropolitana la instalamos y ajustamos contigo sentado. Sin cajas ni tornillos."
+  }
+]

@@ -1,0 +1,60 @@
+---
+import WhatsAppCta from '@/components/ui/WhatsAppCta.astro';
+import { categoryPath } from '@/lib/catalog';
+import type { Category } from '@/lib/content';
+
+interface Props {
+  /** `featured.categoryBar`. Enlaces reales a las páginas de categoría: son puerta de rastreo. */
+  categories: readonly Category[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div class="category-bar">
+  <nav class="category-bar__chips" aria-label="Categorías">
+    {categories.map((category) => <a href={categoryPath(category.data.slug)}>{category.data.longLabel}</a>)}
+  </nav>
+  <WhatsAppCta context="categoryBar" />
+</div>
+
+<style lang="scss">
+  .category-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px $side-padding;
+    background: color("ink");
+
+    // Alto fijo en escritorio: la portada lo descuenta para que ambas llenen la primera pantalla.
+    @include full-screen {
+      box-sizing: border-box;
+      height: $category-bar-height;
+      overflow: hidden;
+    }
+  }
+
+  .category-bar__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    a {
+      padding: 8px 14px;
+      border: 1px solid ice(20%);
+      border-radius: radius("pill");
+      font: 500 12px / 1 font("archivo");
+      color: ice(85%);
+      transition:
+        border-color 0.2s ease,
+        color 0.2s ease;
+
+      &:hover {
+        border-color: color("cobalt-light");
+        color: color("white");
+      }
+    }
+  }
+</style>

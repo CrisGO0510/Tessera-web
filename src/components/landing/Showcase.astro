@@ -1,0 +1,149 @@
+---
+import DarkBanner from '@/components/ui/DarkBanner.astro';
+import Photo from '@/components/ui/Photo.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import type { Chair } from '@/lib/content';
+import { capitalize, numberToWords } from '@/lib/format';
+
+interface Props {
+  /** `featured.showcase`. */
+  chairs: readonly Chair[];
+  /** Tamaño del catálogo completo: el «doce» del título sale de aquí. */
+  total: number;
+}
+
+const { chairs, total } = Astro.props;
+const title = `${capitalize(numberToWords(chairs.length, 'feminine'))} de las ${numberToWords(total, 'feminine')} sillas Tessera`;
+---
+
+<section id="sillas" class="showcase">
+  <div class="showcase__content">
+    <SectionHeading label="Catálogo" title={title} width="46ch">
+      <a slot="action" class="showcase__all" href="/catalogo">Ver las {total} sillas ergonómicas</a>
+    </SectionHeading>
+    <div class="showcase__grid">
+      {
+        chairs.map((chair) => (
+          <article class="chair-card" data-showcase={chair.id}>
+            <a class="chair-card__image" href={`/catalogo#${chair.id}`} tabindex="-1" aria-hidden="true">
+              <Photo
+                class="chair-card__photo"
+                src={chair.data.image.src}
+                alt=""
+                framing={chair.data.image}
+                widths={[400, 800]}
+                sizes="(max-width: 899px) calc(100vw - 32px), 400px"
+              />
+            </a>
+            <div class="chair-card__body">
+              <h3 class="chair-card__name">{chair.data.name}</h3>
+              <p class="chair-card__description">{chair.data.pitch ?? chair.data.description}</p>
+              <a class="chair-card__cta" href={`/catalogo#${chair.id}`}>
+                Ver la ficha de {chair.data.name} →
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+    <DarkBanner id="comparar" text="¿Malla o tapizada? Compáralas lado a lado." link={{ text: 'Abrir el comparador', href: '/comparar' }} />
+  </div>
+</section>
+
+<style lang="scss">
+  .showcase {
+    @include section;
+
+    border-block: 1px solid ink(8%);
+    background: color("white");
+  }
+
+  .showcase__content {
+    @include container;
+
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+
+    @include in-snap-sections {
+      gap: clamp(16px, 3svh, 34px);
+    }
+  }
+
+  .showcase__all {
+    @include pill;
+
+    flex: none;
+    padding: 13px 22px;
+    font-size: 13px;
+  }
+
+  .showcase__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .chair-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid ink(8%);
+    border-radius: radius("l");
+    background: color("ice");
+  }
+
+  .chair-card__image {
+    display: block;
+    overflow: hidden;
+  }
+
+  .chair-card__photo {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    transition: transform 0.5s ease;
+
+    // Por pantallas, la foto cede alto para que el bloque quepa en una pantalla.
+    @include in-snap-sections {
+      aspect-ratio: auto;
+      height: min(22svh, 300px);
+    }
+
+    .chair-card__image:hover & {
+      transform: scale(1.04);
+    }
+  }
+
+  .chair-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 9px;
+    padding: 22px;
+
+    @include in-snap-sections {
+      padding: clamp(14px, 2.2svh, 22px) 22px;
+    }
+  }
+
+  .chair-card__name {
+    margin: 0;
+    font: 600 19px / 1.2 font("archivo");
+    letter-spacing: -0.02em;
+    color: color("ink");
+  }
+
+  .chair-card__description {
+    @include body-text(13.5px, 1.6);
+
+    color: color("gray-mid");
+  }
+
+  .chair-card__cta {
+    margin-top: auto;
+    padding-top: 16px;
+    font: 600 12.5px / 1 font("archivo");
+    color: color("cobalt");
+  }
+</style>

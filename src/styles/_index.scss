@@ -1,0 +1,4 @@
+// Lo que additionalData inyecta en cada <style lang="scss">. Nada aquí emite CSS.
+@forward "tokens";
+@forward "functions";
+@forward "mixins";

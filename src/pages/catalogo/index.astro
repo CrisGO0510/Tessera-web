@@ -1,0 +1,57 @@
+---
+import CatalogHeader from '@/components/catalog/CatalogHeader.astro';
+import Filters from '@/components/catalog/Filters.astro';
+import Guide from '@/components/catalog/Guide.astro';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { breadcrumbsForJsonLd, type VisibleBreadcrumb } from '@/lib/breadcrumbs';
+import { catalogIntro, comparisonBanner, filterState, getSiteContent } from '@/lib/content';
+import { breadcrumbList } from '@/lib/schema';
+
+const path = '/catalogo';
+const content = await getSiteContent();
+const total = content.chairs.length;
+
+// «Sillas» es esta misma página: va sin enlace (y en el JSON-LD se une con el último tramo).
+const breadcrumbs: VisibleBreadcrumb[] = [{ name: 'Inicio', href: '/sillas-ergonomicas' }, { name: 'Sillas' }, { name: 'Ergonómicas home office' }];
+const intro = catalogIntro(content);
+---
+
+<BaseLayout
+  title={`Catálogo de sillas ergonómicas: ${String(total)} modelos`}
+  description={intro}
+  path={path}
+  jsonLd={[breadcrumbList(breadcrumbsForJsonLd(breadcrumbs, site.url, path))]}
+  image={content.chairs[0]?.data.image}
+>
+  <CatalogHeader
+    breadcrumbs={breadcrumbs}
+    title={{ text: 'Sillas ergonómicas para', emphasis: 'oficina en casa' }}
+    intro={intro}
+    visible={total}
+    total={total}
+  />
+  <Filters state={filterState(content, undefined)} total={total} />
+  <Guide
+    banner={comparisonBanner(content)}
+    guide={{
+      title: 'Cómo elegir una silla ergonómica para trabajar en casa',
+      paragraphs: [
+        'La diferencia entre una silla que sirve y una que estorba casi nunca está en el precio: está en si sus rangos de ajuste cubren tu cuerpo y tu escritorio. Antes de mirar modelos, mide la altura de tu mesa y anota cuántas horas seguidas te sientas.',
+        'Con esos dos datos, el asiento debe permitir que las rodillas queden a 90° con los pies planos, y los reposabrazos deben subir hasta dejar el antebrazo paralelo a la mesa. Si un modelo no llega a esas dos medidas, ninguna otra característica lo compensa.',
+      ],
+      sections: [
+        {
+          title: 'Malla o tapizada',
+          text:
+            'La malla ventila y sostiene sin acumular calor: es la opción para climas cálidos y jornadas de más de seis horas. El tapizado da una sensación más mullida y aísla en frío, pero guarda temperatura.',
+        },
+        {
+          title: 'Estatura',
+          text:
+            'Arriba de 1.85 m el respaldo debe cubrir hasta los hombros y el pistón llegar a 52 cm. Debajo de 1.60 m importa más la profundidad del asiento que la altura del respaldo.',
+        },
+      ],
+    }}
+  />
+</BaseLayout>

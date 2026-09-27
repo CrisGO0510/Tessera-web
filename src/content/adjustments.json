@@ -1,0 +1,50 @@
+[
+  {
+    "id": "tension",
+    "order": 1,
+    "title": "Tensión del respaldo",
+    "range": "6 vueltas",
+    "percent": 55,
+    "description": "La malla se tensa según tu peso: firme para trabajar, suave al reclinar.",
+    "point": {
+      "x": 47,
+      "y": 24
+    }
+  },
+  {
+    "id": "lumbar",
+    "order": 2,
+    "title": "Apoyo lumbar",
+    "range": "4 posiciones",
+    "percent": 70,
+    "description": "Se desplaza 60 mm en vertical para caer en la curva de tu espalda.",
+    "point": {
+      "x": 33,
+      "y": 48
+    }
+  },
+  {
+    "id": "reposabrazos",
+    "order": 3,
+    "title": "Reposabrazos",
+    "spec": "armrests",
+    "percent": 80,
+    "description": "Se ajustan hasta dejar el antebrazo paralelo al escritorio.",
+    "point": {
+      "x": 62,
+      "y": 56
+    }
+  },
+  {
+    "id": "altura",
+    "order": 4,
+    "title": "Altura de asiento",
+    "spec": "seatHeight",
+    "percent": 65,
+    "description": "Pistón clase 4. Rodillas a 90° y pies planos.",
+    "point": {
+      "x": 45,
+      "y": 76
+    }
+  }
+]

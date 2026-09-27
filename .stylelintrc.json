@@ -1,0 +1,35 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "**/*.astro"
+      ],
+      "customSyntax": "postcss-html"
+    }
+  ],
+  "rules": {
+    "at-rule-disallowed-list": [
+      "import"
+    ],
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+      {
+        "message": "Usa clases BEM en kebab-case: bloque__elemento--modificador"
+      }
+    ],
+    "color-named": "never",
+    "declaration-no-important": true,
+    "scss/dollar-variable-empty-line-before": null,
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": [
+          "global"
+        ]
+      }
+    ]
+  }
+}

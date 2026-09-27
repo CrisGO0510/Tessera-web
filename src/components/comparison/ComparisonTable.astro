@@ -1,0 +1,325 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import type { ComparisonRow } from '@/lib/comparison';
+import type { Chair } from '@/lib/content';
+
+interface Props {
+  chairs: readonly [Chair, Chair, Chair];
+  rows: readonly ComparisonRow[];
+}
+
+const { chairs, rows } = Astro.props;
+// La columna central es la recomendada (diseño: fondo ice en su cabecera).
+const highlighted = Math.floor(chairs.length / 2);
+const names = chairs.map((chair) => chair.data.name).join(', ');
+---
+
+<section id="cmp-tabla" class="comparison">
+  <ts-comparison class="comparison__content">
+    <div class="comparison__header">
+      <div class="comparison__titles">
+        <span class="comparison__label">Comparador</span>
+        <h1 class="comparison__title">Compara las sillas ergonómicas Tessera</h1>
+      </div>
+      <button class="switch" type="button" role="switch" aria-checked="false" data-comparison-switch hidden>
+        <span class="switch__track" aria-hidden="true"><span class="switch__knob"></span></span>
+        Solo lo que cambia
+      </button>
+    </div>
+
+    <div class="comparison-table__frame">
+      <table class="comparison-table">
+        <caption class="comparison-table__caption">Comparación de {names}</caption>
+        <colgroup>
+          <col class="comparison-table__label-col" />
+          {chairs.map(() => <col />)}
+        </colgroup>
+        <thead>
+          <tr>
+            <td class="comparison-table__corner"></td>
+            {
+              chairs.map((chair, i) => (
+                <th
+                  scope="col"
+                  class:list={['comparison-table__chair', { 'comparison-table__chair--highlighted': i === highlighted }]}
+                  data-chair-column={chair.id}
+                >
+                  <Photo
+                    class="comparison-table__image"
+                    src={chair.data.image.src}
+                    alt={chair.data.image.alt}
+                    framing={chair.data.image}
+                    widths={[150, 300]}
+                    sizes="150px"
+                    priority
+                  />
+                  <span class="comparison-table__name">{chair.data.name}</span>
+                  <span class="comparison-table__summary">{chair.data.summary}</span>
+                  <a class="comparison-table__chair-link" href={`/catalogo#${chair.id}`} data-chair-link={chair.id}>
+                    Ver ficha<span class="comparison-table__visually-hidden"> de {chair.data.name}</span>
+                  </a>
+                </th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((row) => (
+              <tr
+                class:list={['comparison-table__row', { 'comparison-table__row--same': !row.differs }]}
+                data-row={row.label}
+                data-same-row={row.differs ? undefined : ''}
+              >
+                <th scope="row" class="comparison-table__label">
+                  {row.label}
+                  {!row.differs && <span class="comparison-table__same">igual</span>}
+                </th>
+                {row.values.map((value) => (
+                  <td class="comparison-table__value">{value}</td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <p class="comparison__note">Cada columna enlaza a su ficha. Los rangos son los de fábrica, sin calibrar.</p>
+  </ts-comparison>
+</section>
+
+<script>
+  import { registerComparison } from '@/scripts/comparison';
+
+  registerComparison();
+</script>
+
+<style lang="scss">
+  .comparison {
+    @include section-compact;
+
+    background: color("white");
+  }
+
+  .comparison__content {
+    @include container;
+
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .comparison__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .comparison__titles {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 44ch;
+  }
+
+  .comparison__label {
+    @include mono-label;
+
+    color: color("cobalt");
+  }
+
+  .comparison__title {
+    margin: 0;
+    font: 700 clamp(28px, 3.8vw, 44px) / 1.05 font("archivo");
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .switch {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 18px;
+    border: 1px solid ink(16%);
+    border-radius: radius("pill");
+    background: transparent;
+    color: color("ink");
+    font: 600 12.5px / 1 font("archivo");
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease;
+
+    &[hidden] {
+      display: none;
+    }
+
+    &[aria-checked="true"] {
+      border-color: color("ink");
+      background: color("ink");
+      color: color("ice");
+    }
+  }
+
+  .switch__track {
+    position: relative;
+    display: inline-block;
+    width: 26px;
+    height: 14px;
+    border-radius: radius("pill");
+    background: ink(24%);
+
+    .switch[aria-checked="true"] & {
+      background: color("cobalt");
+    }
+  }
+
+  .switch__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: color("white");
+    transition: left 0.25s ease;
+
+    .switch[aria-checked="true"] & {
+      left: 14px;
+    }
+  }
+
+  // position: relative contiene los textos solo-lectores (absolutos) dentro del scroll;
+  // sin él se escapan y ensanchan la página en móvil.
+  .comparison-table__frame {
+    position: relative;
+    overflow-x: auto;
+    border: 1px solid ink(8%);
+    border-radius: radius("m");
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+
+  .comparison-table__caption {
+    @include visually-hidden;
+  }
+
+  .comparison-table__visually-hidden {
+    @include visually-hidden;
+  }
+
+  .comparison-table__label-col {
+    width: 190px;
+  }
+
+  .comparison-table__corner {
+    background: color("ice");
+  }
+
+  .comparison-table__chair {
+    padding: 22px 16px;
+    border-left: 1px solid ink(8%);
+    background: color("white");
+    font-weight: inherit;
+    text-align: center;
+    vertical-align: top;
+  }
+
+  .comparison-table__chair--highlighted {
+    background: color("ice");
+  }
+
+  // <Photo> renderiza <picture><img>: la clase va al <img>.
+  .comparison-table__image {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    margin: 0 auto 10px;
+    aspect-ratio: 1 / 1;
+    border-radius: radius("xs");
+  }
+
+  // <span> y no <h2>: el modelo de contenido de <th> no admite encabezados.
+  .comparison-table__name {
+    display: block;
+    margin: 0 0 10px;
+    font: 600 16px / 1.25 font("archivo");
+    letter-spacing: -0.02em;
+    color: color("ink");
+  }
+
+  .comparison-table__summary {
+    display: block;
+    margin-bottom: 14px;
+    font: 400 10.5px / 1.4 font("mono");
+    color: color("gray-mid");
+  }
+
+  .comparison-table__chair-link {
+    @include pill;
+
+    padding: 9px 16px;
+    font-size: 11.5px;
+  }
+
+  .comparison-table__label {
+    padding: 16px 18px;
+    border-top: 1px solid ink(8%);
+    background: color("ice");
+    color: color("ink");
+    font: 600 12.5px / 1.4 font("archivo");
+    text-align: left;
+  }
+
+  .comparison-table__same {
+    margin-left: 8px;
+    font: 400 9.5px / 1 font("mono");
+    color: color("gray-light");
+  }
+
+  .comparison-table__value {
+    padding: 16px 18px;
+    border-top: 1px solid ink(8%);
+    border-left: 1px solid ink(8%);
+    background: color("white");
+    color: color("ink-2");
+    font: 400 13px / 1.5 font("archivo");
+    vertical-align: top;
+  }
+
+  .comparison-table__row--same .comparison-table__value {
+    background: color("ice-alt");
+  }
+
+  .comparison__note {
+    margin: 0;
+    font: 400 11px / 1.6 font("mono");
+    color: color("gray-light");
+  }
+
+  // Móvil (spec §8.1): scroll horizontal con la columna de etiquetas fija.
+  @include mobile {
+    .comparison-table {
+      min-width: 640px;
+    }
+
+    .comparison-table__label-col {
+      width: 128px;
+    }
+
+    .comparison-table__corner,
+    .comparison-table__label {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      box-shadow: 1px 0 0 ink(8%);
+    }
+  }
+</style>

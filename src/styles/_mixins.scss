@@ -1,0 +1,148 @@
+@use "sass:list";
+@use "tokens";
+@use "functions" as *;
+
+// Tipografía (handoff «Tipografía»).
+@mixin h1 {
+  margin: 0;
+  font: 700 clamp(34px, 5.2vw, 60px) / 1.02 font("archivo");
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+// h1 de las páginas interiores (catálogo, comparador): algo más contenido que el de la portada.
+@mixin h1-page {
+  margin: 0;
+  font: 700 clamp(30px, 4.2vw, 50px) / 1.04 font("archivo");
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+@mixin h2 {
+  margin: 0;
+  font: 700 clamp(28px, 3.6vw, 42px) / 1.06 font("archivo");
+  letter-spacing: -0.035em;
+}
+
+@mixin h2-serif {
+  margin: 0;
+  font: 300 clamp(28px, 3.8vw, 44px) / 1.08 font("newsreader");
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+@mixin serif-emphasis {
+  font-family: font("newsreader");
+  font-style: italic;
+  font-weight: 300;
+  color: color("cobalt");
+}
+
+@mixin mono-label($size: 10px) {
+  font: 500 list.slash($size, 1) font("mono");
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+// list.slash: con variables, `$a / $b` sería una división de Sass y no la barra de `font`.
+@mixin body-text($size: 15px, $line-height: 1.65) {
+  margin: 0;
+  font: 400 list.slash($size, $line-height) font("archivo");
+  color: color("gray-text");
+  text-wrap: pretty;
+}
+
+// Estructura.
+@mixin section {
+  padding: clamp(56px, 7vw, 96px) tokens.$side-padding;
+}
+
+@mixin section-compact {
+  padding: clamp(40px, 5vw, 68px) tokens.$side-padding;
+}
+
+@mixin container($name: "general") {
+  max-width: content-width($name);
+  margin-inline: auto;
+}
+
+@mixin mobile {
+  @media (width < tokens.$mobile-breakpoint) {
+    @content;
+  }
+}
+
+// Ventanas donde cada bloque de la landing cabe en una pantalla (scroll por pantallas).
+@mixin full-screen {
+  @media (width >= tokens.$mobile-breakpoint) and (height >= tokens.$full-screen-min-height) {
+    @content;
+  }
+}
+
+// Reglas que solo aplican a una página por pantallas (<html data-snap-sections>) cuando cada
+// bloque ocupa una pantalla. Para usar dentro del <style> de un componente de Astro.
+@mixin in-snap-sections {
+  @include full-screen {
+    :global(html[data-snap-sections]) & {
+      @content;
+    }
+  }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Botón pill (header, CTAs oscuros).
+@mixin pill($background: color("ink"), $text: color("ice"), $hover: color("cobalt")) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 17px;
+  border-radius: radius("pill");
+  background: $background;
+  color: $text;
+  font: 600 12.5px / 1 font("archivo");
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: $hover;
+    color: $text;
+  }
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid color("cobalt");
+    outline-offset: 3px;
+  }
+}
+
+// Amplía el área táctil a $minimum sin cambiar el aspecto (spec §9). $width permite
+// limitarla en horizontal cuando los controles están más juntos que $minimum, para que
+// el área de uno no invada la del vecino.
+@mixin touch-target($minimum: 44px, $width: $minimum) {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, #{$width});
+    height: max(100%, #{$minimum});
+    transform: translate(-50%, -50%);
+  }
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

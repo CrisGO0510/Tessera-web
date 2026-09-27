@@ -1,0 +1,93 @@
+---
+import ConversionBlock from '@/components/ui/ConversionBlock.astro';
+import type { ResolvedVerdict } from '@/lib/content';
+
+interface Props {
+  verdicts: readonly ResolvedVerdict[];
+  /** Nombres de las sillas de la tabla: van en el mensaje de WhatsApp. */
+  models: readonly string[];
+}
+
+const { verdicts, models } = Astro.props;
+---
+
+<section id="cmp-veredicto" class="verdict">
+  <div class="verdict__content">
+    <h2 class="verdict__title">¿Cuál te conviene?</h2>
+    <div class="verdict__grid">
+      {
+        verdicts.map(({ entry, chair }) => (
+          <div class="verdict__card" data-verdict={entry.id}>
+            <span class="verdict__profile">{entry.data.profile}</span>
+            <strong class="verdict__chair">{chair.data.name}</strong>
+            <p class="verdict__reason">{entry.data.reason}</p>
+          </div>
+        ))
+      }
+    </div>
+    <ConversionBlock
+      headline="¿Sigues entre dos modelos?"
+      text="Mándanos tu estatura y la altura de tu escritorio: te decimos cuál de las dos te queda."
+      context="comparison"
+      gradientStart="white"
+      models={models}
+    />
+  </div>
+</section>
+
+<style lang="scss">
+  .verdict {
+    @include section-compact;
+
+    background: color("ice");
+  }
+
+  .verdict__content {
+    @include container("text");
+
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .verdict__title {
+    margin: 0;
+    font: 700 clamp(26px, 3.4vw, 40px) / 1.06 font("archivo");
+    letter-spacing: -0.035em;
+  }
+
+  .verdict__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .verdict__card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid ink(8%);
+    border-radius: radius("m");
+    background: color("white");
+  }
+
+  .verdict__profile {
+    @include mono-label(9.5px);
+
+    color: color("cobalt");
+  }
+
+  .verdict__chair {
+    font: 600 18px / 1.25 font("archivo");
+    letter-spacing: -0.02em;
+    color: color("ink");
+  }
+
+  .verdict__reason {
+    @include body-text(13.5px);
+
+    color: color("gray-mid");
+  }
+</style>

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "primera-silla",
+    "order": 1,
+    "profile": "Si es tu primera silla buena",
+    "chair": "duna",
+    "reason": "Cubre lo esencial: malla, lumbar ajustable y un rango de altura que sirve a la mayoría de los escritorios."
+  },
+  {
+    "id": "ocho-horas",
+    "order": 2,
+    "profile": "Si te sientas más de ocho horas",
+    "chair": "mora-pro",
+    "reason": "Reclinación hasta 135° y cabecera: puedes cambiar de postura sin levantarte de la silla."
+  },
+  {
+    "id": "alto-o-calor",
+    "order": 3,
+    "profile": "Si mides más de 1.85 m o hace calor",
+    "chair": "ignea",
+    "reason": "Respaldo alto con soporte de hombros y malla que no guarda temperatura en turnos largos."
+  }
+]

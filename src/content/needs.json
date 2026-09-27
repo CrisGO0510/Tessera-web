@@ -1,0 +1,38 @@
+[
+  {
+    "id": "dolor-lumbar",
+    "order": 1,
+    "label": "Dolor lumbar",
+    "title": "Me duele la espalda al final del día",
+    "description": "Sillas con lumbar ajustable en altura y tensión, no una almohadilla fija.",
+    "cta": "Ver sillas con soporte lumbar",
+    "category": "lumbar"
+  },
+  {
+    "id": "jornadas-largas",
+    "order": 2,
+    "label": "Jornadas largas",
+    "title": "Me siento diez horas al día",
+    "description": "Mecanismos para uso intensivo: reclinación con topes y asiento de espuma moldeada.",
+    "cta": "Ver sillas para uso intensivo",
+    "category": "intensivo"
+  },
+  {
+    "id": "clima-calido",
+    "order": 3,
+    "label": "Clima cálido",
+    "title": "Trabajo con calor y sin aire",
+    "description": "Respaldo y asiento de malla transpirable, sin tapizados que guarden temperatura.",
+    "cta": "Ver sillas de malla",
+    "category": "malla"
+  },
+  {
+    "id": "estatura",
+    "order": 4,
+    "label": "Estatura",
+    "title": "Mido más de 1.85 m",
+    "description": "Respaldos altos, cabecera y pistón largo para que el cuerpo no sobre por arriba.",
+    "cta": "Ver sillas para 1.85 m +",
+    "category": "alta"
+  }
+]

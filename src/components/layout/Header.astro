@@ -1,0 +1,161 @@
+---
+import { site } from '@/data/site';
+---
+
+<header class="header">
+  <ts-menu class="header__menu">
+    <a class="header__brand" href="/sillas-ergonomicas">TESSERA</a>
+    <div class="header__panel" id="main-menu" data-menu-panel>
+      <nav class="header__nav" aria-label="Principal">
+        {site.nav.map((link) => <a href={link.href}>{link.text}</a>)}
+      </nav>
+      <a class="header__business header__business--mobile" href={site.businessLink.href}>{site.businessLink.text}</a>
+    </div>
+    <div class="header__actions">
+      <a class="header__business header__business--desktop" href={site.businessLink.href}>{site.businessLink.text}</a>
+      <a class="header__cta" href="/catalogo">Ver catálogo</a>
+      <button class="header__menu-button" type="button" data-menu-button aria-controls="main-menu" aria-expanded="false">
+        Menú
+      </button>
+    </div>
+  </ts-menu>
+</header>
+
+<script>
+  import { registerMenu } from '@/scripts/menu';
+
+  registerMenu();
+</script>
+
+<style lang="scss">
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: var(--header-height);
+    padding: 14px $side-padding;
+    background: rgb(238 242 251 / 95%);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid ink(8%);
+  }
+
+  .header__menu {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-template-areas: "brand panel actions";
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .header__brand {
+    grid-area: brand;
+    font: 800 19px / 1 font("archivo");
+    letter-spacing: -0.04em;
+    color: color("ink");
+
+    &:hover {
+      color: color("ink");
+    }
+  }
+
+  .header__panel {
+    grid-area: panel;
+  }
+
+  .header__nav {
+    display: flex;
+    gap: clamp(12px, 2vw, 22px);
+    font: 500 13.5px / 1 font("archivo");
+
+    a {
+      color: ink(80%);
+
+      &:hover {
+        color: color("cobalt");
+      }
+    }
+  }
+
+  .header__actions {
+    grid-area: actions;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header__business {
+    font: 500 12.5px / 1 font("archivo");
+    color: ink(65%);
+
+    &:hover {
+      color: color("cobalt");
+    }
+  }
+
+  .header__business--mobile,
+  .header__menu-button {
+    display: none;
+  }
+
+  .header__cta {
+    @include pill;
+  }
+
+  @include mobile {
+    .header__menu {
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "brand actions"
+        "panel panel";
+      row-gap: 0;
+    }
+
+    .header__actions {
+      justify-self: end;
+    }
+
+    .header__business--desktop {
+      display: none;
+    }
+
+    // Sin JS el botón no haría nada: solo aparece con <html data-js> (lo pone BaseLayout).
+    :global(html[data-js]) .header__menu-button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 14px;
+      border: 1px solid ink(16%);
+      border-radius: radius("pill");
+      background: transparent;
+      color: color("ink");
+      font: 600 12.5px / 1 font("archivo");
+      cursor: pointer;
+    }
+
+    .header__panel {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 14px;
+    }
+
+    :global(html[data-js]) .header__panel:not([data-open]) {
+      display: none;
+    }
+
+    .header__nav {
+      flex-direction: column;
+      gap: 14px;
+      font-size: 15px;
+    }
+
+    .header__business--mobile {
+      display: block;
+      font-size: 15px;
+    }
+  }
+</style>

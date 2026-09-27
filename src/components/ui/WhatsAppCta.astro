@@ -1,0 +1,49 @@
+---
+import { site } from '@/data/site';
+import { messageWithModels, whatsAppUrl, type WhatsAppContext } from '@/lib/contact';
+
+interface Props {
+  context: WhatsAppContext;
+  size?: 'normal' | 'large';
+  /** Modelos que se están mirando: rellenan `{models}` en el mensaje prellenado. */
+  models?: readonly string[];
+}
+
+const { context, size = 'normal', models = [] } = Astro.props;
+const message = messageWithModels(site.whatsAppMessages[context], models, site.market.locale);
+const href = whatsAppUrl(site.contact.whatsapp, message);
+---
+
+<a class:list={['whatsapp-cta', `whatsapp-cta--${size}`]} href={href} rel="noopener" target="_blank" data-whatsapp={context}>
+  Cotizar por WhatsApp<span class="whatsapp-cta__note">{site.whatsAppNote}</span>
+</a>
+
+<style lang="scss">
+  .whatsapp-cta {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    border-radius: radius("pill");
+    background: color("whatsapp");
+    color: color("whatsapp-text");
+    font: 600 12.5px / 1 font("archivo");
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: color("whatsapp-hover");
+      color: color("whatsapp-text");
+    }
+  }
+
+  .whatsapp-cta--large {
+    padding: 14px 22px;
+    font-size: 13.5px;
+  }
+
+  .whatsapp-cta__note {
+    font: 400 10.5px / 1 font("mono");
+    opacity: 0.8; // 0,75 en el diseño: por debajo de 4,5:1 (WCAG AA) sobre el verde
+  }
+</style>

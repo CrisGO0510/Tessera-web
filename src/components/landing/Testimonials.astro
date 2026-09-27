@@ -1,0 +1,343 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import type { ResolvedTestimonial } from '@/lib/content';
+
+interface Props {
+  testimonials: readonly ResolvedTestimonial[];
+}
+
+const { testimonials } = Astro.props;
+const hasExtras = testimonials.some(({ entry }) => !entry.data.featured);
+---
+
+<section id="experiencias" class="testimonials">
+  <ts-testimonials class="testimonials__frame">
+    <div class="testimonials__header">
+      <SectionHeading label="Experiencias" title="Experiencias de quien ya se sentó" width="34ch" variant="dark">
+        {
+          hasExtras && (
+            <button slot="action" type="button" class="testimonials__more" data-testimonials-more aria-expanded="false" hidden>
+              <span data-testimonials-more-text>Leer más experiencias</span>
+              <span class="testimonials__arrow" aria-hidden="true">
+                →
+              </span>
+            </button>
+          )
+        }
+      </SectionHeading>
+    </div>
+
+    <div class="testimonials__carousel">
+      <button type="button" class="testimonials__step testimonials__step--prev" data-testimonials-prev aria-label="Experiencias anteriores" hidden>←</button>
+      <div class="testimonials__cards">
+        {
+          testimonials.map(({ entry, chairLabel }) => (
+            <article class="testimonial" data-testimonial data-featured={String(entry.data.featured)}>
+              <Photo
+                class="testimonial__image"
+                src={entry.data.image.src}
+                alt={entry.data.image.alt}
+                framing={entry.data.image}
+                widths={[400, 800]}
+                sizes="(max-width: 899px) calc(100vw - 32px), 400px"
+              />
+              <div class="testimonial__body">
+                <div class="testimonial__person">
+                  <span class="testimonial__initial" aria-hidden="true">
+                    {entry.data.name.charAt(0)}
+                  </span>
+                  <span class="testimonial__who">
+                    <strong class="testimonial__name">{entry.data.name}</strong>
+                    <span class="testimonial__meta">{entry.data.meta}</span>
+                  </span>
+                </div>
+                <p class="testimonial__quote">
+                  {entry.data.quote}
+                  {entry.data.extendedQuote !== undefined && <span data-extended> {entry.data.extendedQuote}</span>}
+                </p>
+                {
+                  entry.data.extendedQuote !== undefined && (
+                    <button type="button" class="testimonial__read-more" data-read-more aria-expanded="false" hidden>
+                      Ver más
+                    </button>
+                  )
+                }
+                <div class="testimonial__footer">
+                  <span>{chairLabel}</span>
+                  <span class="testimonial__dot" aria-hidden="true" />
+                  <span>{entry.data.tenure}</span>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+      <button type="button" class="testimonials__step testimonials__step--next" data-testimonials-next aria-label="Experiencias siguientes" hidden>→</button>
+    </div>
+
+    <div class="testimonials__position">
+      <span data-testimonials-position aria-live="polite">{testimonials.length} experiencias</span>
+      <span class="testimonials__line" aria-hidden="true"></span>
+    </div>
+  </ts-testimonials>
+</section>
+
+<script>
+  import { registerTestimonials } from '@/scripts/testimonials';
+
+  registerTestimonials();
+</script>
+
+<style lang="scss">
+  .testimonials {
+    padding: clamp(56px, 7vw, 96px) 0;
+    overflow: hidden;
+    background: color("ink");
+  }
+
+  .testimonials__frame {
+    @include container;
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 0 $side-padding;
+  }
+
+  .testimonials__header {
+    margin-bottom: 16px;
+  }
+
+  .testimonials__more {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 18px;
+    border: 1px solid rgb(127 160 255 / 40%);
+    border-radius: radius("pill");
+    background: transparent;
+    color: color("cobalt-light");
+    font: 600 13px / 1 font("archivo");
+    cursor: pointer;
+    transition:
+      border-color 0.25s ease,
+      color 0.25s ease;
+
+    &:hover {
+      border-color: color("white");
+      color: color("white");
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .testimonials__arrow {
+    display: inline-block;
+    font: 400 15px / 1 font("mono");
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+
+    [aria-expanded="true"] > & {
+      transform: rotate(-90deg);
+    }
+  }
+
+  .testimonials__carousel {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    grid-template-areas: "prev cards next";
+    align-items: center;
+    gap: 14px;
+
+    @include mobile {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas:
+        "cards cards"
+        "prev next";
+    }
+  }
+
+  .testimonials__cards {
+    display: grid;
+    grid-area: cards;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 20px;
+
+    @include mobile {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .testimonials__step {
+    width: 48px;
+    height: 48px;
+    border: 1px solid ice(20%);
+    border-radius: 50%;
+    background: transparent;
+    color: color("ice");
+    font: 400 20px / 1 font("mono");
+    cursor: pointer;
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease;
+
+    &:hover:not(:disabled) {
+      border-color: color("cobalt-light");
+      background: ice(12%);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .testimonials__step--prev {
+    grid-area: prev;
+
+    @include mobile {
+      justify-self: end;
+    }
+  }
+
+  .testimonials__step--next {
+    grid-area: next;
+
+    @include mobile {
+      justify-self: start;
+    }
+  }
+
+  .testimonial {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: radius("l");
+    background: color("ice");
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .testimonial__image {
+    width: 100%;
+    height: 210px;
+
+    @include in-snap-sections {
+      height: min(22svh, 210px);
+    }
+  }
+
+  .testimonial__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+
+    @include in-snap-sections {
+      padding: clamp(14px, 2.4svh, 24px);
+    }
+  }
+
+  .testimonial__person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .testimonial__initial {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: color("cobalt");
+    color: color("white");
+    font: 600 12px / 1 font("archivo");
+  }
+
+  .testimonial__who {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .testimonial__name {
+    font: 600 12.5px / 1 font("archivo");
+    color: color("ink");
+  }
+
+  .testimonial__meta {
+    font: 400 10px / 1 font("mono");
+    color: color("gray-mid");
+  }
+
+  .testimonial__quote {
+    @include body-text(14.5px);
+
+    color: color("ink-2");
+  }
+
+  .testimonial__read-more {
+    align-self: flex-start;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: color("cobalt");
+    font: 600 12px / 1 font("archivo");
+    cursor: pointer;
+
+    &:hover {
+      color: color("cobalt-dark");
+    }
+  }
+
+  .testimonial__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    min-width: 0;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid ink(8%);
+    font: 400 10px / 1 font("mono");
+    color: color("gray-mid");
+  }
+
+  .testimonial__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgb(90 100 128 / 40%);
+  }
+
+  .testimonials__position {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font: 400 10.5px / 1 font("mono");
+    color: ice(48%); // 45 % en el diseño: 48 % es el mínimo con 4,5:1 (WCAG AA)
+  }
+
+  .testimonials__line {
+    flex: 1;
+    height: 1px;
+    background: ice(12%);
+  }
+</style>

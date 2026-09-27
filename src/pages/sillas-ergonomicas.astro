@@ -1,0 +1,40 @@
+---
+import Anatomy from '@/components/landing/Anatomy.astro';
+import CategoryBar from '@/components/landing/CategoryBar.astro';
+import Delivery from '@/components/landing/Delivery.astro';
+import Faq from '@/components/landing/Faq.astro';
+import Hero from '@/components/landing/Hero.astro';
+import Needs from '@/components/landing/Needs.astro';
+import Showcase from '@/components/landing/Showcase.astro';
+import Testimonials from '@/components/landing/Testimonials.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getSiteContent } from '@/lib/content';
+import { faqPage } from '@/lib/schema';
+
+const content = await getSiteContent();
+const faqJsonLd = faqPage(content.faqs.map((faq) => ({ question: faq.data.question, answer: faq.data.answer })));
+---
+
+<BaseLayout
+  title="Sillas ergonómicas para home office"
+  description="Sillas ergonómicas calibradas a tu estatura, tu escritorio y tus horas sentado. Elige por lo que te duele y cotiza con un asesor por WhatsApp."
+  path="/sillas-ergonomicas"
+  jsonLd={[faqJsonLd]}
+  image={content.hero[0]?.data.image}
+  snapSections
+>
+  <Hero chairs={content.hero} />
+  <CategoryBar categories={content.categoryBar} />
+  <Needs needs={content.needs} />
+  <Showcase chairs={content.showcase} total={content.chairs.length} />
+  <Anatomy chair={content.anatomy} adjustments={content.adjustments} />
+  <Testimonials testimonials={content.testimonials} />
+  <Delivery steps={content.steps} />
+  <Faq faqs={content.faqs} />
+</BaseLayout>
+
+<script>
+  import { initSnapSections } from '@/scripts/snap-sections';
+
+  initSnapSections();
+</script>

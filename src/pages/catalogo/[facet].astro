@@ -1,0 +1,44 @@
+---
+import CatalogHeader from '@/components/catalog/CatalogHeader.astro';
+import Filters from '@/components/catalog/Filters.astro';
+import Guide from '@/components/catalog/Guide.astro';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { breadcrumbsForJsonLd, type VisibleBreadcrumb } from '@/lib/breadcrumbs';
+import { categoryPath } from '@/lib/catalog';
+import { comparisonBanner, filterState, getSiteContent, type Category } from '@/lib/content';
+import { breadcrumbList } from '@/lib/schema';
+
+interface Props {
+  category: Category;
+}
+
+export async function getStaticPaths(): Promise<{ params: { facet: string }; props: Props }[]> {
+  const { categories } = await getSiteContent();
+  return categories.map((category) => ({ params: { facet: category.data.slug }, props: { category } }));
+}
+
+const { category } = Astro.props;
+const content = await getSiteContent();
+const path = categoryPath(category.data.slug);
+const state = filterState(content, category);
+const total = content.chairs.length;
+
+const breadcrumbs: VisibleBreadcrumb[] = [
+  { name: 'Inicio', href: '/sillas-ergonomicas' },
+  { name: 'Sillas', href: '/catalogo' },
+  { name: category.data.longLabel },
+];
+---
+
+<BaseLayout
+  title={category.data.seo.title}
+  description={category.data.seo.description}
+  path={path}
+  jsonLd={[breadcrumbList(breadcrumbsForJsonLd(breadcrumbs, site.url, path))]}
+  image={state.visible[0]?.data.image}
+>
+  <CatalogHeader breadcrumbs={breadcrumbs} title={category.data.title} intro={category.data.intro} visible={state.visible.length} total={total} />
+  <Filters state={state} total={total} base={category} />
+  <Guide guide={category.data.guide} banner={comparisonBanner(content)} />
+</BaseLayout>

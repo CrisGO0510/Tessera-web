@@ -1,0 +1,304 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import { site } from '@/data/site';
+import { adjustmentRange } from '@/lib/comparison';
+import { themeGradient, type Adjustment, type Chair } from '@/lib/content';
+import { capitalize, numberToWords } from '@/lib/format';
+
+interface Props {
+  /** `featured.anatomy`: su foto y su gradiente. */
+  chair: Chair;
+  adjustments: readonly Adjustment[];
+}
+
+const { chair, adjustments } = Astro.props;
+const background = themeGradient(chair);
+const intro = `${capitalize(numberToWords(adjustments.length, 'apocopated'))} ajustes deciden si una silla te sirve o te estorba. Toca cada punto para ver el rango real de la ${chair.data.name}.`;
+const twoDigits = (n: number): string => String(n).padStart(2, '0');
+const rangeOf = (adjustment: Adjustment): string => adjustmentRange(adjustment.data, chair.data, site.market.locale);
+// La foto se ve siempre entera y los puntos se colocan sobre ella (no sobre el marco):
+// así los % de adjustments.json valen para una foto de cualquier proporción.
+const aspectRatio = `${String(chair.data.image.src.width)} / ${String(chair.data.image.src.height)}`;
+---
+
+<section id="anatomia" class="anatomy">
+  <div class="anatomy__content">
+    <SectionHeading label="Anatomía de una Tessera" title="Cómo se ajusta una silla ergonómica" intro={intro} width="56ch" />
+    <ts-anatomy class="anatomy__grid">
+      <div class="anatomy__photo" style={`background: ${background}`}>
+        <div class="anatomy__canvas" style={`--photo-aspect-ratio: ${aspectRatio}`}>
+          <Photo
+            class="anatomy__image"
+            src={chair.data.image.src}
+            alt={chair.data.image.alt}
+            framing={{ fit: 'contain', focus: { x: 50, y: 50 } }}
+            widths={[500, 1000]}
+            sizes="(max-width: 899px) calc(100vw - 32px), 600px"
+          />
+          {
+            adjustments.map((adjustment, i) => (
+              <button
+                type="button"
+                class="anatomy__point"
+                data-adjustment-point={String(i)}
+                aria-label={`${String(i + 1)}. ${adjustment.data.title}`}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                aria-controls={`adjustment-${adjustment.id}`}
+                style={`left: ${String(adjustment.data.point.x)}%; top: ${String(adjustment.data.point.y)}%`}
+              >
+                {i + 1}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="anatomy__detail">
+        {/* Al elegir un punto, el panel puede quedar lejos en móvil: se anuncia el ajuste. */}
+        <p class="anatomy__announcer" aria-live="polite" data-adjustment-announcer></p>
+        {
+          adjustments.map((adjustment, i) => (
+            <div class="adjustment" id={`adjustment-${adjustment.id}`} data-adjustment-panel={String(i)} data-announcement={`${adjustment.data.title}: ${rangeOf(adjustment)}`}>
+              <div class="adjustment__number">
+                Ajuste {i + 1} de {adjustments.length}
+              </div>
+              <h3 class="adjustment__title">{adjustment.data.title}</h3>
+              <div class="adjustment__range">{rangeOf(adjustment)}</div>
+              <p class="adjustment__description">{adjustment.data.description}</p>
+              <div class="adjustment__bar">
+                <div class="adjustment__fill" style={`width: ${String(adjustment.data.percent)}%`} />
+              </div>
+            </div>
+          ))
+        }
+        {
+          adjustments.map((adjustment, i) => (
+            <button
+              type="button"
+              class="adjustment-row"
+              data-adjustment-row={String(i)}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              aria-controls={`adjustment-${adjustment.id}`}
+            >
+              <span class="adjustment-row__number">{twoDigits(i + 1)}</span>
+              <span class="adjustment-row__title">{adjustment.data.title}</span>
+              <span class="adjustment-row__range">{rangeOf(adjustment)}</span>
+            </button>
+          ))
+        }
+      </div>
+    </ts-anatomy>
+  </div>
+</section>
+
+<script>
+  import { registerAnatomy } from '@/scripts/anatomy';
+
+  registerAnatomy();
+</script>
+
+<style lang="scss">
+  .anatomy {
+    @include section;
+
+    background: color("ice");
+  }
+
+  .anatomy__content {
+    @include container;
+
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+
+    @include in-snap-sections {
+      gap: clamp(16px, 3svh, 36px);
+    }
+  }
+
+  .anatomy__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    align-items: start;
+    gap: 28px;
+  }
+
+  // Marco de proporción fija; dentro, el lienzo toma la proporción de la foto y cabe
+  // entero (unidades de contenedor), y los puntos van en % del lienzo.
+  .anatomy__photo {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    aspect-ratio: 1 / 1.05;
+    overflow: hidden;
+    border-radius: radius("xl");
+    container-type: size;
+
+    @include in-snap-sections {
+      aspect-ratio: auto;
+      height: min(50svh, 640px);
+    }
+  }
+
+  .anatomy__canvas {
+    position: relative;
+    width: min(100cqw, 100cqh * (var(--photo-aspect-ratio)));
+    aspect-ratio: var(--photo-aspect-ratio);
+  }
+
+  .anatomy__image {
+    width: 100%;
+    height: 100%;
+  }
+
+  // Puntos posicionados con los % de `ajustes.json` (recalibrar con la foto real).
+  .anatomy__point {
+    @include touch-target;
+
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 2px solid color("ink");
+    border-radius: 50%;
+    background: color("ice");
+    color: color("ink");
+    font: 600 12px / 1 font("mono");
+    cursor: pointer;
+    transition:
+      background 0.25s ease,
+      color 0.25s ease;
+
+    &[aria-pressed="true"] {
+      background: color("cobalt");
+      color: color("white");
+    }
+  }
+
+  .anatomy__announcer {
+    @include visually-hidden;
+  }
+
+  .anatomy__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+
+    @include in-snap-sections {
+      gap: clamp(8px, 1.4svh, 14px);
+    }
+  }
+
+  .adjustment {
+    padding: 28px;
+    border: 1px solid ink(8%);
+    border-radius: radius("l");
+    background: color("white");
+
+    @include in-snap-sections {
+      padding: clamp(16px, 2.6svh, 28px);
+    }
+  }
+
+  .adjustment__number {
+    @include mono-label(9.5px);
+
+    color: color("cobalt");
+  }
+
+  .adjustment__title {
+    margin: 10px 0 0;
+    font: 600 24px / 1.2 font("archivo");
+    letter-spacing: -0.025em;
+    color: color("ink");
+  }
+
+  .adjustment__range {
+    margin-top: 8px;
+    font: 300 34px / 1 font("newsreader");
+    color: color("cobalt");
+  }
+
+  .adjustment__description {
+    @include body-text(14.5px);
+
+    margin-top: 12px;
+  }
+
+  .adjustment__bar {
+    height: 5px;
+    margin-top: 18px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: ink(8%);
+  }
+
+  .adjustment__fill {
+    height: 100%;
+    background: color("cobalt");
+    transform-origin: left;
+    animation: ts-grow 0.35s ease;
+
+    @include reduced-motion {
+      animation: none;
+    }
+  }
+
+  .adjustment-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid ink(12%);
+    border-radius: radius("xs");
+    background: transparent;
+    font-family: font("archivo");
+    text-align: left;
+    cursor: pointer;
+    transition:
+      border-color 0.25s ease,
+      background 0.25s ease;
+
+    &:hover {
+      border-color: color("cobalt");
+    }
+
+    &[aria-pressed="true"] {
+      border-color: color("cobalt");
+      background: color("white");
+    }
+
+    @include in-snap-sections {
+      padding-block: clamp(9px, 1.4svh, 14px);
+    }
+  }
+
+  .adjustment-row__number {
+    flex: none;
+    font: 500 10.5px / 1 font("mono");
+    color: color("gray-mid");
+  }
+
+  .adjustment-row__title {
+    font: 600 14px / 1.3 font("archivo");
+    color: color("ink");
+  }
+
+  .adjustment-row__range {
+    margin-left: auto;
+    font: 400 11px / 1 font("mono");
+    color: color("gray-mid");
+  }
+
+  @keyframes ts-grow {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>

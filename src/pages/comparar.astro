@@ -1,0 +1,27 @@
+---
+import ComparisonTable from '@/components/comparison/ComparisonTable.astro';
+import Verdicts from '@/components/comparison/Verdicts.astro';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { breadcrumbsForJsonLd } from '@/lib/breadcrumbs';
+import { defineRows, deriveRows } from '@/lib/comparison';
+import { getSiteContent } from '@/lib/content';
+import { breadcrumbList } from '@/lib/schema';
+
+const { comparison, verdicts } = await getSiteContent();
+const rows = deriveRows(
+  comparison.map((chair) => chair.data),
+  defineRows(site.market.locale, site.deliveryHours),
+);
+---
+
+<BaseLayout
+  title="Compara las sillas ergonómicas Tessera"
+  description="Compara lado a lado respaldo, altura de asiento, reposabrazos, reclinación y lumbar de las sillas ergonómicas Tessera, y elige la tuya con un asesor."
+  path="/comparar"
+  jsonLd={[breadcrumbList(breadcrumbsForJsonLd([{ name: 'Inicio', href: '/sillas-ergonomicas' }, { name: 'Comparador' }], site.url, '/comparar'))]}
+  image={comparison[0].data.image}
+>
+  <ComparisonTable chairs={comparison} rows={rows} />
+  <Verdicts verdicts={verdicts} models={comparison.map((chair) => chair.data.name)} />
+</BaseLayout>

@@ -1,0 +1,92 @@
+---
+import ConversionBlock from '@/components/ui/ConversionBlock.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import type { Step } from '@/lib/content';
+
+interface Props {
+  steps: readonly Step[];
+}
+
+const { steps } = Astro.props;
+---
+
+<section id="entrega" class="delivery">
+  <div class="delivery__content">
+    <SectionHeading
+      label="Entrega e instalación"
+      title="Cómo llega tu silla"
+      intro="Cada silla sale calibrada a la persona que la va a usar. Por eso el pedido pasa por un asesor y no por un carrito."
+    />
+    <ol class="delivery__steps">
+      {
+        steps.map((step, i) => (
+          <li class="step">
+            <span class="step__number">Paso {i + 1}</span>
+            <h3 class="step__title">{step.data.title}</h3>
+            <p class="step__description">{step.data.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+    <ConversionBlock
+      headline="Dinos tu estatura y cuántas horas te sientas"
+      text="Un asesor te dice qué modelo y qué ajustes te corresponden. Sin llamadas ni formularios largos."
+      context="delivery"
+    />
+  </div>
+</section>
+
+<style lang="scss">
+  .delivery {
+    @include section;
+
+    background: color("white");
+  }
+
+  .delivery__content {
+    @include container;
+
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+
+  .delivery__steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    padding: 26px;
+    border: 1px solid ink(8%);
+    border-radius: radius("m");
+    background: color("ice");
+  }
+
+  .step__number {
+    @include mono-label;
+
+    color: color("cobalt");
+  }
+
+  .step__title {
+    margin: 0;
+    font: 600 18.5px / 1.25 font("archivo");
+    letter-spacing: -0.02em;
+    color: color("ink");
+  }
+
+  .step__description {
+    @include body-text(13.5px);
+
+    color: color("gray-mid");
+  }
+</style>

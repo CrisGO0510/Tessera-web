@@ -1,0 +1,125 @@
+@use "sass:map";
+
+// Única salida de tokens a :root (spec §4). Se carga una vez desde BaseLayout.
+:root {
+  @each $name, $value in $colors {
+    --color-#{$name}: #{$value};
+  }
+
+  // Alto del header sticky. El header lo usa como min-height, así que el scroll por
+  // pantallas puede dejar cada bloque justo debajo sin asomar el anterior.
+  --header-height: #{$header-height};
+
+  @include mobile {
+    --header-height: #{$header-height-mobile};
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+
+  @include reduced-motion {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: color("ice");
+  color: color("ink");
+  font-family: font("archivo");
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: color("cobalt");
+  text-decoration: none;
+
+  &:hover {
+    color: color("cobalt-dark");
+  }
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+// Landing por pantallas (<html data-snap-sections>, lo pone BaseLayout). Cada bloque es un
+// punto de anclaje del scroll: en escritorio ocupa una pantalla entera y el scroll salta
+// de una a otra (mandatory); en móvil los bloques miden más de una pantalla, así que solo
+// se ancla al acercarse a un inicio (proximity) y nunca se atrapa contenido.
+html[data-snap-sections] {
+  scroll-snap-type: y proximity;
+  scroll-padding-top: var(--header-height);
+
+  section[id] {
+    scroll-margin-top: 0;
+  }
+
+  main > section,
+  body > footer {
+    scroll-snap-align: start;
+  }
+
+  @include full-screen {
+    scroll-snap-type: y mandatory;
+
+    main > section:not(#inicio) {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: calc(100svh - var(--header-height));
+      padding-block: clamp(24px, 5svh, 64px);
+
+      > * {
+        width: 100%;
+      }
+    }
+
+    // El footer cierra la página: se ancla por abajo para no dejar un hueco tras él.
+    body > footer {
+      scroll-snap-align: end;
+    }
+  }
+}
+
+// Enlace «Saltar al contenido»: invisible hasta que el teclado lo enfoca.
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: radius("pill");
+  background: color("ink");
+  color: color("ice");
+  font: 600 13px / 1 font("archivo");
+  transform: translateY(-200%);
+
+  &:focus-visible {
+    color: color("ice");
+    transform: none;
+  }
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+:focus-visible {
+  outline: 2px solid color("cobalt");
+  outline-offset: 3px;
+}

@@ -1,0 +1,12 @@
+---
+import type { Thing } from 'schema-dts';
+import { serializeJsonLd } from '@/lib/schema';
+
+interface Props {
+  data: Thing | readonly Thing[];
+}
+
+const { data } = Astro.props;
+---
+
+<script type="application/ld+json" is:inline set:html={serializeJsonLd(data)} />

@@ -1,0 +1,88 @@
+---
+import type { Faq } from '@/lib/content';
+
+interface Props {
+  faqs: readonly Faq[];
+}
+
+const { faqs } = Astro.props;
+---
+
+<section id="faq" class="faq">
+  <div class="faq__content">
+    <h2 class="faq__title">Preguntas frecuentes</h2>
+    <div class="faq__list">
+      {
+        faqs.map((faq) => (
+          <details class="question" data-faq={faq.id}>
+            <summary class="question__summary">
+              {faq.data.question}
+              <span class="question__sign" aria-hidden="true">
+                +
+              </span>
+            </summary>
+            <p class="question__answer">{faq.data.answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style lang="scss">
+  .faq {
+    @include section;
+
+    background: color("ice");
+  }
+
+  .faq__content {
+    @include container("faq");
+
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .faq__title {
+    @include h2;
+  }
+
+  .faq__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .question {
+    border-bottom: 1px solid ink(13%);
+  }
+
+  .question__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 2px;
+    font: 600 16.5px / 1.4 font("archivo");
+    color: color("ink");
+    list-style: none;
+    cursor: pointer;
+
+    &:hover {
+      color: color("cobalt");
+    }
+  }
+
+  .question__sign {
+    flex: none;
+    font: 300 24px / 1 font("newsreader");
+    color: color("cobalt");
+  }
+
+  .question__answer {
+    @include body-text(14.5px, 1.7);
+
+    max-width: 70ch;
+    padding: 0 2px 24px;
+  }
+</style>

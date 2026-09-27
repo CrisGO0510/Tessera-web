@@ -1,0 +1,65 @@
+---
+import type { VisibleBreadcrumb } from '@/lib/breadcrumbs';
+
+interface Props {
+  items: readonly VisibleBreadcrumb[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Miga de pan">
+  <ol class="breadcrumbs__list">
+    {
+      items.map((item, i) => (
+        <li class="breadcrumbs__item">
+          {item.href === undefined ? (
+            <span class="breadcrumbs__current" aria-current={i === items.length - 1 ? 'page' : undefined}>
+              {item.name}
+            </span>
+          ) : (
+            <a class="breadcrumbs__link" href={item.href}>
+              {item.name}
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style lang="scss">
+  .breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: 400 11px / 1 font("mono");
+    color: color("gray-mid");
+  }
+
+  .breadcrumbs__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    & + &::before {
+      content: "/";
+    }
+  }
+
+  .breadcrumbs__link {
+    color: color("gray-mid");
+
+    &:hover {
+      color: color("cobalt");
+    }
+  }
+
+  .breadcrumbs__current {
+    color: color("ink");
+  }
+</style>

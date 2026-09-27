@@ -1,0 +1,176 @@
+[
+  {
+    "id": "malla",
+    "slug": "malla",
+    "group": "backrest",
+    "order": 1,
+    "label": "Malla",
+    "longLabel": "Sillas de malla",
+    "title": {
+      "text": "Sillas ergonómicas de",
+      "emphasis": "malla"
+    },
+    "intro": "Respaldo y asiento de malla transpirable: la opción para trabajar con calor o sin aire acondicionado.",
+    "seo": {
+      "title": "Sillas ergonómicas de malla",
+      "description": "Sillas ergonómicas de malla transpirable para home office, calibradas a tu estatura y a tu escritorio. Cotiza con un asesor."
+    },
+    "guide": {
+      "title": "Cuándo elegir una silla de malla",
+      "paragraphs": [
+        "La malla deja pasar el aire entre la espalda y el respaldo, así que no acumula calor en jornadas largas."
+      ],
+      "sections": [
+        {
+          "title": "Tensión",
+          "text": "Una malla bien tensada sostiene sin hundirse; por eso se calibra según tu peso antes de salir del taller."
+        }
+      ]
+    }
+  },
+  {
+    "id": "tapizada",
+    "slug": "tapizada",
+    "group": "backrest",
+    "order": 2,
+    "label": "Tapizada",
+    "longLabel": "Sillas tapizadas",
+    "title": {
+      "text": "Sillas ergonómicas",
+      "emphasis": "tapizadas"
+    },
+    "intro": "Espuma moldeada y tapizado técnico para quien prefiere una sensación más firme.",
+    "seo": {
+      "title": "Sillas ergonómicas tapizadas",
+      "description": "Sillas ergonómicas tapizadas con espuma moldeada para home office. Te asesoramos por WhatsApp para elegir la tuya."
+    },
+    "guide": {
+      "title": "Cuándo elegir una silla tapizada",
+      "paragraphs": [
+        "El tapizado da una sensación más firme y aísla en climas fríos, pero acumula calor en jornadas largas."
+      ],
+      "sections": [
+        {
+          "title": "Densidad",
+          "text": "La espuma de alta densidad conserva la forma con los años de uso diario."
+        }
+      ]
+    }
+  },
+  {
+    "id": "lumbar",
+    "slug": "lumbar",
+    "group": "solves",
+    "order": 1,
+    "label": "Soporte lumbar",
+    "longLabel": "Con soporte lumbar",
+    "title": {
+      "text": "Sillas con soporte",
+      "emphasis": "lumbar ajustable"
+    },
+    "intro": "Lumbar ajustable en altura y tensión para que el apoyo caiga en la curva de tu espalda.",
+    "seo": {
+      "title": "Sillas ergonómicas con soporte lumbar",
+      "description": "Sillas con soporte lumbar ajustable para dolor de espalda al trabajar en casa. Un asesor te ayuda a elegir y calibrar la tuya."
+    },
+    "guide": {
+      "title": "Cómo debe ser un buen soporte lumbar",
+      "paragraphs": [
+        "Un lumbar útil se mueve en vertical y cambia de presión; una almohadilla fija casi nunca cae en el lugar correcto."
+      ],
+      "sections": [
+        {
+          "title": "Altura",
+          "text": "El apoyo debe quedar a la altura de la curva de tu espalda baja, justo por encima del cinturón."
+        }
+      ]
+    }
+  },
+  {
+    "id": "intensivo",
+    "slug": "uso-intensivo",
+    "group": "solves",
+    "order": 2,
+    "label": "Uso intensivo",
+    "longLabel": "Para uso intensivo",
+    "title": {
+      "text": "Sillas para",
+      "emphasis": "uso intensivo"
+    },
+    "intro": "Mecanismos para jornadas de ocho horas o más: reclinación con topes y asiento de espuma moldeada.",
+    "seo": {
+      "title": "Sillas ergonómicas para uso intensivo",
+      "description": "Sillas ergonómicas para jornadas largas: reclinación con topes, cabecera y espuma moldeada. Cotiza con un asesor."
+    },
+    "guide": {
+      "title": "Qué necesita una silla para jornadas largas",
+      "paragraphs": [
+        "Cambiar de postura sin levantarte es lo que más alivia en jornadas largas: por eso importan la reclinación con topes y la cabecera."
+      ],
+      "sections": [
+        {
+          "title": "Mecanismo",
+          "text": "Un mecanismo sincronizado mueve asiento y respaldo a la vez para que no pierdas el apoyo al reclinar."
+        }
+      ]
+    }
+  },
+  {
+    "id": "alta",
+    "slug": "altos",
+    "group": "height",
+    "order": 1,
+    "label": "1.85 m o más",
+    "longLabel": "Para 1.85 m +",
+    "title": {
+      "text": "Sillas ergonómicas para",
+      "emphasis": "personas altas"
+    },
+    "intro": "Respaldos altos, cabecera y pistón largo para que el cuerpo no sobre por arriba.",
+    "seo": {
+      "title": "Sillas ergonómicas para personas altas",
+      "description": "Sillas ergonómicas para personas de 1.85 m o más: respaldo alto, cabecera y pistón largo. Te asesoramos por WhatsApp."
+    },
+    "guide": {
+      "title": "Qué mirar si mides más de 1.85 m",
+      "paragraphs": [
+        "Si el respaldo te queda corto, los hombros quedan sin apoyo; busca respaldo alto o cabecera regulable."
+      ],
+      "sections": [
+        {
+          "title": "Pistón",
+          "text": "Un pistón largo deja las rodillas a 90° aunque el escritorio sea alto."
+        }
+      ]
+    }
+  },
+  {
+    "id": "compacta",
+    "slug": "compactas",
+    "group": "height",
+    "order": 2,
+    "label": "Escritorio pequeño",
+    "longLabel": "Para escritorios pequeños",
+    "title": {
+      "text": "Sillas ergonómicas",
+      "emphasis": "compactas"
+    },
+    "intro": "Pensadas para escritorios de menos de 1.20 m y espacios pequeños.",
+    "seo": {
+      "title": "Sillas ergonómicas compactas",
+      "description": "Sillas ergonómicas compactas para escritorios pequeños y departamentos. Cotiza la tuya con un asesor por WhatsApp."
+    },
+    "guide": {
+      "title": "Cómo elegir una silla para un espacio pequeño",
+      "paragraphs": [
+        "En un escritorio pequeño importan la base, el ancho de los reposabrazos y que la silla entre bajo la mesa."
+      ],
+      "sections": [
+        {
+          "title": "Reposabrazos",
+          "text": "Unos reposabrazos que bajan lo suficiente dejan meter la silla bajo el escritorio al terminar."
+        }
+      ]
+    }
+  }
+]

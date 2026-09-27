@@ -1,0 +1,43 @@
+---
+interface Props {
+  text: string;
+  link: { text: string; href: string };
+  id?: string;
+}
+
+const { text, link, id } = Astro.props;
+---
+
+<div class="dark-banner" id={id}>
+  <p class="dark-banner__text">{text}</p>
+  <a class="dark-banner__link" href={link.href}>{link.text}</a>
+</div>
+
+<style lang="scss">
+  .dark-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 22px 26px;
+    border-radius: radius("m");
+    background: color("ink");
+  }
+
+  .dark-banner__text {
+    max-width: 34ch;
+    margin: 0;
+    font: 300 clamp(19px, 2.2vw, 26px) / 1.3 font("newsreader");
+    color: color("ice");
+    text-wrap: pretty;
+  }
+
+  .dark-banner__link {
+    @include pill(color("ice"), color("ink"), color("cobalt-light"));
+
+    flex: none;
+    padding: 13px 22px;
+    font-size: 13px;
+  }
+</style>

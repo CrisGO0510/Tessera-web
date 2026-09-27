@@ -1,0 +1,326 @@
+---
+import { categoryPath, chipLabel, countMatches } from '@/lib/catalog';
+import type { Category, FilterState } from '@/lib/content';
+import ChairGrid from './ChairGrid.astro';
+
+interface Props {
+  /** Calculado en la página con `filterState()`. */
+  state: FilterState;
+  /** Total del catálogo. */
+  total: number;
+  /** Categoría de la página de faceta; en /catalogo no hay. */
+  base?: Category;
+}
+
+const { state, total, base } = Astro.props;
+const { visible, active, groups, others, data } = state;
+---
+
+<section class="filters" id="cat-filtros">
+  <ts-filters class="filters__content" data-total={total} data-base={base?.id}>
+    <details class="filters__panel" data-filters-panel>
+      <summary class="filters__summary">Filtros</summary>
+      <div class="filters__groups">
+        {
+          groups.map((group) => (
+            <div class="filters__group">
+              <span class="filters__group-title">{group.title}</span>
+              {group.options.map((category) => (
+                <a
+                  class="filters__option"
+                  href={category.id === base?.id ? '/catalogo' : categoryPath(category.data.slug)}
+                  aria-current={category.id === base?.id ? 'true' : undefined}
+                  data-option={category.id}
+                  data-slug={category.data.slug}
+                >
+                  <span class="filters__checkbox" aria-hidden="true" />
+                  <span class="filters__label">{category.data.label}</span>
+                  <span class="filters__count" data-count>
+                    {countMatches(data, category.id, active)}
+                  </span>
+                </a>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </details>
+
+    <div class="filters__results">
+      <div class="filters__chips">
+        {
+          base === undefined ? (
+            <span class="filters__no-filters">sin filtros · las {total} sillas</span>
+          ) : (
+            <>
+              <a class="filters__chip" href="/catalogo" data-base-chip aria-label={`${chipLabel(base.data.label)} (quitar filtro)`}>
+                {chipLabel(base.data.label)}
+              </a>
+              {others.map((category) => (
+                <button class="filters__chip" type="button" data-chip={category.id} aria-label={`${chipLabel(category.data.label)} (quitar filtro)`} hidden>
+                  {chipLabel(category.data.label)}
+                </button>
+              ))}
+              <a class="filters__clear" href="/catalogo">
+                limpiar filtros
+              </a>
+            </>
+          )
+        }
+      </div>
+      {/* Sin él, las tarjetas (h3) saltarían directo desde el h1 de la cabecera. */}
+      <h2 class="filters__grid-title">{base === undefined ? 'Todos los modelos' : `Modelos: ${base.data.longLabel.toLowerCase()}`}</h2>
+      <ChairGrid chairs={visible} />
+      <p class="filters__empty" data-empty hidden>Ninguna silla cumple todos estos filtros</p>
+      <div class="filters__footer">
+        <span class="filters__showing" aria-live="polite">Mostrando <span data-showing-count>{visible.length}</span> de {total}</span>
+        <a class="filters__see-all" href="/catalogo">Ver las {total} sillas</a>
+      </div>
+    </div>
+  </ts-filters>
+</section>
+
+<script>
+  import { registerFilters } from '@/scripts/filters';
+
+  registerFilters();
+</script>
+
+<style lang="scss">
+  .filters__grid-title {
+    @include visually-hidden;
+  }
+
+  .filters {
+    @include section-compact;
+
+    background: color("white");
+  }
+
+  .filters__content {
+    @include container;
+
+    display: grid;
+    grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
+    align-items: start;
+    gap: 34px;
+  }
+
+  .filters__panel {
+    position: sticky;
+
+    // Header sticky (~64 px) + los 24 px del diseño.
+    top: 88px;
+    min-width: 0;
+  }
+
+  // El <details> llega cerrado (así lo quiere el móvil) y en escritorio su contenido se
+  // muestra con ::details-content: sin JS ni saltos de maquetación. Sin soporte del
+  // pseudo-elemento, el escritorio queda como el móvil: un «Filtros» que se abre.
+  .filters__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    padding: 0 16px;
+    font: 600 13px / 1 font("archivo");
+    color: color("ink");
+    list-style: none;
+    cursor: pointer;
+
+    &::after {
+      content: "+";
+      font: 300 22px / 1 font("newsreader");
+      color: color("cobalt");
+    }
+  }
+
+  .filters__panel[open] .filters__summary::after {
+    content: "−";
+  }
+
+  @supports selector(::details-content) {
+    @media (width >= 900px) {
+      .filters__summary {
+        display: none;
+      }
+
+      .filters__panel::details-content {
+        content-visibility: visible;
+      }
+    }
+  }
+
+  .filters__groups {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .filters__group {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .filters__group-title {
+    @include mono-label(9.5px);
+
+    color: color("cobalt");
+  }
+
+  .filters__option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid ink(12%);
+    border-radius: radius("mini");
+    background: transparent;
+    transition: border-color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+      border-color: color("cobalt");
+    }
+
+    &[aria-current] {
+      border-color: color("cobalt");
+      background: color("ice");
+    }
+  }
+
+  .filters__checkbox {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid ink(28%);
+    border-radius: radius("checkbox");
+    transition: background 0.2s ease, border-color 0.2s ease;
+
+    .filters__option[aria-current] & {
+      border-color: color("cobalt");
+      background: color("cobalt");
+    }
+  }
+
+  .filters__label {
+    font: 500 13px / 1.3 font("archivo");
+    color: color("ink");
+  }
+
+  .filters__count {
+    margin-left: auto;
+    font: 400 10.5px / 1 font("mono");
+    color: color("gray-mid");
+  }
+
+  .filters__results {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  .filters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 30px;
+  }
+
+  .filters__chip {
+    padding: 7px 13px;
+    border: 0;
+    border-radius: radius("pill");
+    background: color("ink");
+    color: color("ice");
+    font: 500 11px / 1 font("mono");
+    cursor: pointer;
+
+    &:hover {
+      background: color("cobalt");
+      color: color("ice");
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .filters__clear {
+    padding: 7px 13px;
+    border: 1px solid ink(13%);
+    border-radius: radius("pill");
+    background: transparent;
+    color: color("gray-mid");
+    font: 500 11px / 1 font("mono");
+
+    &:hover {
+      border-color: color("cobalt");
+      color: color("cobalt");
+    }
+  }
+
+  .filters__no-filters {
+    font: 400 11px / 1 font("mono");
+    color: color("gray-light");
+  }
+
+  .filters__empty {
+    margin: 0;
+    padding: 24px 0;
+    font: 400 11px / 1.6 font("mono");
+    color: color("gray-light");
+    text-align: center;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  .filters__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding-top: 6px;
+  }
+
+  .filters__showing {
+    font: 400 11px / 1 font("mono");
+    color: color("gray-mid");
+  }
+
+  .filters__see-all {
+    padding: 12px 20px;
+    border: 1px solid ink(13%);
+    border-radius: radius("pill");
+    background: transparent;
+    color: color("ink");
+    font: 600 12.5px / 1 font("archivo");
+
+    &:hover {
+      border-color: color("cobalt");
+      color: color("cobalt");
+    }
+  }
+
+  @include mobile {
+    .filters__content {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .filters__panel {
+      position: static;
+      border: 1px solid ink(12%);
+      border-radius: radius("xs");
+    }
+
+    .filters__groups {
+      padding: 4px 16px 18px;
+    }
+  }
+</style>
