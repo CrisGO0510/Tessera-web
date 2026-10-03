@@ -15,10 +15,10 @@ export default defineConfig({
     baseURL: `http://localhost:${String(PORT)}`,
     trace: 'on-first-retry',
   },
-  // Sirve el build ya generado (npm run build antes). `astro preview` no aplica
+  // Sirve el build ya generado (pnpm build antes). `astro preview` no aplica
   // public/_redirects: la 301 de «/» se comprueba a mano contra el hosting.
   webServer: {
-    command: `npx astro preview --port ${String(PORT)} --ignore-lock`,
+    command: `pnpm exec astro preview --port ${String(PORT)} --ignore-lock`,
     url: `http://localhost:${String(PORT)}/sillas-ergonomicas`,
     reuseExistingServer: !enCi,
   },

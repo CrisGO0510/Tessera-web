@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # El ecosistema «npm» cubre también pnpm: Dependabot lee pnpm-lock.yaml.
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -15,7 +16,3 @@ updates:
       - dependency-name: typescript
         update-types: ["version-update:semver-major"]
 
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: monthly

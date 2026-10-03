@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "UNLICENSED",
+  "packageManager": "pnpm@11.28.2",
   "engines": {
     "node": ">=24"
   },
@@ -13,13 +14,15 @@
     "lint": "eslint .",
     "lint:styles": "stylelint \"src/**/*.{scss,astro}\"",
     "test": "vitest run",
-    "verify": "npm run check && npm run lint && npm run lint:styles && npm run test",
+    "verify": "pnpm check && pnpm lint && pnpm lint:styles && pnpm test",
     "build": "astro check && astro build",
     "preview": "astro preview",
+    "build:pages": "pnpm verify && pnpm build && pnpm links",
     "links": "node scripts/check-links.ts dist",
     "e2e": "playwright test",
-    "lhci": "lhci autorun",
-    "audit": "npm audit --omit=dev --audit-level=high"
+    "lhci": "CHROME_PATH=\"$(node -p \"require('@playwright/test').chromium.executablePath()\")\" lhci autorun",
+    "audit": "pnpm audit --prod --audit-level high",
+    "verify:full": "pnpm run audit && pnpm build:pages && pnpm e2e && pnpm lhci"
   },
   "allowScripts": {
     "esbuild": true
