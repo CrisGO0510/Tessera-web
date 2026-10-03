@@ -11,7 +11,7 @@ paga el cliente (cláusulas 2 y 6).
 | Servicio | Para qué | Titular | Plan | Costo |
 |---|---|---|---|---|
 | GitHub (organización del proyecto) | Código, Dependabot | Desarrollador → cliente al traspaso | Free | 0 |
-| Cloudflare Pages | Hosting estático, SSL, previews por rama | Cuenta del proyecto | Free | 0 |
+| Cloudflare Workers (archivos estáticos) | Hosting estático, SSL, previews por rama | Cuenta del proyecto | Free | 0 |
 | Cloudflare DNS | DNS del dominio | Cuenta del proyecto | Free | 0 |
 | Registrador del dominio | Dominio | **Cliente** | — | Renovación anual, la paga el cliente |
 | Google Workspace | Correo del dominio | **Cliente** | Según licencias | Lo paga el cliente |
@@ -22,8 +22,8 @@ registrador, servicio de monitoreo y quién tiene acceso a cada uno.
 
 ## Despliegue
 
-- **Cloudflare Pages** conectado al repositorio: comando `pnpm build:pages`, carpeta `dist`, versión de Node desde `.node-version`.
-- Variable de entorno `PNPM_VERSION` = la de `packageManager` en `package.json` (hoy `11.28.2`). La imagen de build v3 de Cloudflare no lee `packageManager` ni Corepack: sin la variable usa su pnpm por defecto.
+- **Cloudflare Workers** (archivos estáticos, configurado en `wrangler.jsonc`) conectado al repositorio: build `pnpm build:pages`, deploy `npx wrangler deploy`, preview de ramas `npx wrangler versions upload`. Versión de Node desde `.node-version`.
+- Variable de build `PNPM_VERSION` (*Settings → Build → Variables and secrets*) = la de `packageManager` en `package.json` (hoy `11.28.2`). La imagen de build v3 de Cloudflare no lee `packageManager` ni Corepack: sin la variable usa su pnpm por defecto.
 - No hay CI en GitHub Actions: el build de Cloudflare es la puerta de calidad. `build:pages` ejecuta `verify` (tipos, lint, estilos, tests), `build` y `links`; si algo falla no se despliega, tampoco el preview. E2E, Lighthouse y `audit` necesitan navegador o red y se ejecutan en local (`pnpm verify:full`).
 - Cada rama y cada PR generan una URL de preview: es la que revisa el delegado del cliente en cada hito.
 - `main` despliega a producción.
@@ -31,13 +31,13 @@ registrador, servicio de monitoreo y quién tiene acceso a cada uno.
 
 ### Revertir
 
-Cloudflare Pages → proyecto → *Deployments* → despliegue anterior → *Rollback to this deployment*. Después, revertir el commit en `main` para que el siguiente despliegue no lo reintroduzca.
+Cloudflare → *Workers & Pages* → `tessera` → *Deployments* → versión anterior → *Rollback*. Después, revertir el commit en `main` para que el siguiente despliegue no lo reintroduzca.
 
 ## Registros DNS
 
 | Tipo | Nombre | Valor | Para qué |
 |---|---|---|---|
-| CNAME | `@` / `www` | `<proyecto>.pages.dev` (lo crea Cloudflare al añadir el dominio personalizado) | Sitio |
+| (automático) | `@` / `www` | Lo crea Cloudflare al añadir el dominio en `tessera` → *Settings → Domains & Routes → Custom domain* | Sitio |
 | MX | `@` | `smtp.google.com`, prioridad 1 | Google Workspace |
 | TXT | `@` | `v=spf1 include:_spf.google.com ~all` | SPF |
 | TXT | `google._domainkey` | Clave que genera la consola de Workspace (*Aplicaciones → Gmail → Autenticar correo*) | DKIM |
@@ -52,7 +52,7 @@ Incluye infraestructura, DNS, SSL, monitoreo, actualizaciones de seguridad y bug
 
 - **Semanal (lunes):** revisar los PR de Dependabot. Si su preview de Cloudflare se construyó, fusionar los de parches y menores; los de versión mayor se prueban en local (`pnpm verify:full`).
 - **Mensual:** `pnpm run audit` en local; revisar alertas del monitor y el panel de Cloudflare.
-- **Ante una alerta de caída:** estado de Cloudflare Pages, último despliegue, DNS. Revertir si el fallo viene del último despliegue.
+- **Ante una alerta de caída:** estado de Cloudflare Workers, último despliegue, DNS. Revertir si el fallo viene del último despliegue.
 
 ## Cambios de contenido (trabajo aparte del mantenimiento)
 
@@ -75,7 +75,7 @@ El código, los nombres de archivo y las claves de los datos están en inglés; 
 ## Puesta en marcha (hito H3)
 
 - [ ] `src/data/site.ts`: `url` con el dominio real, `contact.whatsapp`, `contact.email`, `market` (`es-CO` o `es-MX`), `shippingText` y `whatsAppNote` confirmados por el cliente. Mientras haya datos de relleno, el build lo avisa (`[tessera:real-data]`).
-- [ ] Cloudflare Pages → *Settings → Environment variables* (solo **Production**): `REQUIRE_REAL_DATA=1`. Con ella, un build de producción con datos de relleno falla en vez de publicarse.
+- [ ] Cloudflare → `tessera` → *Settings → Build → Variables and secrets* (variables de **build**, no las de runtime del Worker): `REQUIRE_REAL_DATA=1`. Con ella, un build con datos de relleno falla en vez de publicarse. Workers Builds no separa variables por rama, así que aplica también a los previews: activarla cuando los datos reales ya estén en `main`.
 - [ ] Contenido real: sillas, categorías (con su copy SEO), testimonios con permiso, FAQ, garantía y devoluciones validados por el cliente (cláusula 8).
 - [ ] Fotos reales en `src/assets/` y puntos de anatomía recalibrados (`src/content/adjustments.json`).
 - [ ] Favicon y logo definitivos.

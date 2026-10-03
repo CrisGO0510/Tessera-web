@@ -1,0 +1,11 @@
+// Despliegue en Cloudflare (Workers con archivos estáticos): sin código de servidor, solo dist/.
+// `name` debe coincidir con el nombre del proyecto en el panel de Cloudflare.
+{
+  "name": "tessera",
+  "compatibility_date": "2026-10-03",
+  "assets": {
+    "directory": "./dist",
+    // dist/404.html con estado 404 para cualquier ruta que no exista.
+    "not_found_handling": "404-page"
+  }
+}
